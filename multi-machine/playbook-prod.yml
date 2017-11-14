@@ -1,0 +1,35 @@
+---
+- become: yes
+  hosts: all
+  tasks:
+    - include: base.yml
+
+    # Copy git script
+    - name: prod. copy git clone file
+      copy:
+        src: git-clone.sh
+        dest: /home/vagrant/
+        mode: 0770
+
+    # Running git clone script
+    # - name: prod. Running git clone script
+    #   command: sh ./git-clone.sh
+    #   when: result|failed
+
+    # Copy git script
+    - name: prod. copy Dockerfile to server
+      copy:
+        src: Dockerfile
+        dest: /home/vagrant/company-app/companyApp/node-version/server
+        mode: 0777
+
+   # Copy git script
+   - name: prod. copy Dockerfile to webClient
+     copy:
+       src: Dockerfile
+       dest: /home/vagrant/company-app/companyApp/node-version/webclient
+       mode: 0777
+
+    # Docker compose up
+    #- name: 12. running docker-compose up
+      #shell: sudo docker-compose up

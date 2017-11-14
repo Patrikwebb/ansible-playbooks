@@ -1,0 +1,19 @@
+---
+- become: yes
+  hosts: all
+  tasks:
+    - include: tasks/base.yml
+    - include: tasks/consul.yml
+    - include: tasks/registrator.yml
+
+    # Copy upload folder
+    - name: prod.1 copy upload folder
+      copy:
+        dest: /home/vagrant/
+        src: upload/
+
+    # Run docker compose
+    # - name: prod.2 run docker compose
+    #   docker_service:
+    #     project_name: co
+    #     project_src: /upload

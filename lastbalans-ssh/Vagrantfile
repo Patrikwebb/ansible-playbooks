@@ -1,0 +1,15 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define "prod_v4" do |prod|
+    prod.vm.box = "debian/jessie64"
+    prod.vm.provision :ansible do |ansible|
+      ansible.playbook = "playbook-prod.yml"
+
+      # Debugging and logging
+      ansible.verbose = true
+    end
+    #prod.vm.network 'private_network', ip: '10.0.0.2'
+    prod.vm.network 'private_network', ip: '192.168.10.2'
+  end
+
+end

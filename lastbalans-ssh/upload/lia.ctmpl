@@ -1,0 +1,3 @@
+upstream lia{
+{{range service "webapp"}}    server {{ServiceAdress}}:{{.5000}};
+{{end}}}

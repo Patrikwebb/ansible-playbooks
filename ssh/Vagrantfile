@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define "ssh_1" do |prod|
+    prod.vm.box = "debian/jessie64"
+    prod.vm.provision :ansible do |ansible|
+      ansible.playbook = "playbook.yml"
+    end
+    prod.vm.network 'private_network', ip: '10.0.0.2'
+  end
+
+  config.vm.define "ssh_2" do |dev|
+    dev.vm.box = "debian/jessie64"
+    dev.vm.provision :ansible do |ansible|
+      ansible.playbook = "playbook.yml"
+    end
+    dev.vm.network 'private_network', ip: '10.0.0.3'
+  end
+
+end

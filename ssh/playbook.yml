@@ -1,0 +1,5 @@
+---
+- become: yes
+  hosts: all
+  tasks:
+    #- include: tasks/base.yml

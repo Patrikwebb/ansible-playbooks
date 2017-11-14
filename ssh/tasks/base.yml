@@ -1,0 +1,38 @@
+---
+- name: base.1 install apt-transport-https
+  apt:
+    name: apt-transport-https
+    update_cache: yes
+- name: base.2 install ca-certificates
+  apt:
+    name: ca-certificates
+- name: base.3 install gnupg2
+  apt:
+    name: gnupg2
+- name: base.4 add Docker repository
+  apt_repository:
+    repo: deb https://apt.dockerproject.org/repo debian-jessie main
+- name: base.5 add Docker public key
+  shell: apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+- name: base.6 install docker-engine
+  apt:
+    name: docker-engine
+    update_cache: yes
+
+# Packages install
+- name: base.7 Installing packages
+  action: "{{ ansible_pkg_mgr }} pkg={{ item }} state=present"
+  with_items:
+    - python-setuptools
+
+# Pip install
+- name: base.8 Installing dependencies
+  easy_install:
+    name: pip
+
+# Docker compose install
+- name: base.9 install docker-compose
+  pip:
+    name: docker-compose
+    version: 1.9.0
+    state: present

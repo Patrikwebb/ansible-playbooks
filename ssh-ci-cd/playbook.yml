@@ -1,0 +1,77 @@
+---
+- become: yes
+  handlers:
+  - name: restart sshd
+    service:
+      name: sshd
+      state: reloaded
+
+  hosts: []
+
+  roles:
+    - docker-engine
+
+  #####
+  #
+  # Files:
+  #   - upload/deploy.sh
+  #   - upload/sshd_config
+  #   - upload/docker-compose.yml
+  #   - upload/docker-config.json
+  # 
+  ######
+
+  tasks:
+  - name: group deploy exists
+    group:
+      name: deploy
+      state: present
+
+  - name: user deploy exists
+    user:
+      createhome: yes
+      groups: deploy,docker
+      name: deploy
+      shell: /home/deploy/deploy.sh
+      state: present
+
+  - name: sshd_config is updated
+    copy:
+      dest: /etc/ssh/sshd_config
+      src: upload/sshd_config
+    notify: restart sshd
+
+  - name: SSH key for deploy user is present
+    authorized_key:
+      key: "{{ lookup('file', 'upload/id_rsa.pub') }}"
+      state: present
+      user: deploy
+
+  - name: Deploy script is present
+    copy:
+      dest: /home/deploy/deploy.sh
+      group: deploy
+      mode: u+rx
+      owner: deploy
+      src: upload/deploy.sh
+
+  - name: docker-compose.yml is present
+    copy:
+      dest: /home/deploy/docker-compose.yml
+      group: deploy
+      mode: u+r
+      owner: deploy
+      src: upload/docker-compose.yml
+
+  - name: /home/deploy/.docker exists
+    file:
+      path: /home/deploy/.docker
+      state: directory
+
+  - name: deploy user has docker registry token
+    copy:
+      dest: /home/deploy/.docker/config.json
+      group: deploy
+      mode: u+r
+      owner: deploy
+      src: upload/docker-config.json

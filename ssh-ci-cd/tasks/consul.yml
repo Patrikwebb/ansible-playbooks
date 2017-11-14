@@ -1,0 +1,31 @@
+---
+
+# Consul data dirs
+- name: consul. create Consul directories
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - /var/local/consul/data
+    - /var/local/consul/logs
+
+# Consul bin
+- name: consul. copy Consul
+  copy:
+    dest: '/usr/local/bin/consul'
+    mode: '0755'
+    src: 'lib/consul'
+
+# Consul template bin
+- name: consul. copy Consul Template
+  copy:
+    dest: '/usr/local/bin/consul-template'
+    mode: '0755'
+    src: 'lib/consul-template'
+
+# Consul start
+- name: consul. start up Consul
+  shell: nohup consul agent -bootstrap -bind=192.168.10.2 \
+    -data-dir /var/local/consul/data -node production -server \
+    >> /var/local/consul/logs/stdout \
+    2>> /var/local/consul/logs/stderr &

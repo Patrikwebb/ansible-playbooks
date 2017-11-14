@@ -1,0 +1,18 @@
+stages:
+  - build
+  - deploy
+
+build:
+  <snip>
+
+deploy to staging:
+  stage: deploy
+  script:
+    # CI_BUILD_REF references the branch rather than the commit
+    # ID, so we are grabbing the commit ID from Git outselves
+    - COMMIT_ID=$(git rev-parse HEAD)
+    - TAG="$COMMIT_ID"
+    - trigger-deployment.sh $TAG
+  environment:
+    name: staging
+    url: https://staging.example.com

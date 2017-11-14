@@ -1,0 +1,20 @@
+52c52
+#PasswordAuthentication yes
+---
+PasswordAuthentication no
+64,65c64,65
+< X11Forwarding yes
+< X11DisplayOffset 10
+---
+X11Forwarding no
+# X11DisplayOffset 10
+90c90,96
+PasswordAuthentication no
+---
+
+Match Group deploy
+   AllowTcpForwarding no
+   X11Forwarding no
+   PermitTunnel no
+   GatewayPorts no
+   AllowAgentForwarding no

@@ -1,0 +1,75 @@
+---
+- become: yes
+  hosts: all
+  tasks:
+    - include: tasks/base.yml
+
+    ######################
+    #
+    #   1. copy git clone file
+    #   2. run git clone script
+    #   3. copy Dockerfile to server
+    #   4. copy Dockerfile to webClient
+    #   5. copy docker-compose file
+    #   6. create companyApp server docker image
+    #   7. create companyApp web client docker image
+    #   8. run docker compose
+    #
+    #############################
+
+    # Copy git script
+    - name: prod.1 copy git clone file
+      copy:
+        src: upload/git-clone.sh
+        dest: /home/vagrant/
+        mode: 0770
+
+    # Run git clone script
+    - name: prod.2 run git clone script
+      command: sh ./git-clone.sh
+      args:
+        creates: company-app
+
+    # Copy docker file to server
+    - name: prod.3 copy Dockerfile to server
+      copy:
+        src: upload/Dockerfile
+        dest: /home/vagrant/company-app/companyApp/node-version/server
+        mode: 0777
+
+    # Copy docker file to web client
+    - name: prod.4 copy Dockerfile to webClient
+      copy:
+        src: upload/Dockerfile
+        dest: /home/vagrant/company-app/companyApp/node-version/webclient
+        mode: 0777
+
+    # Copy docker-compose && Create Docker image
+    - name: prod.5 copy docker-compose file
+      copy:
+        dest: /home/vagrant/company-app/companyApp/node-version/
+        src: upload/docker-compose.yml
+
+    # Create companyApp server docker image
+    # - name: prod.6 create companyApp server docker image
+    #   docker_image:
+    #     path: /home/vagrant/company-app/companyApp/node-version/server
+    #     name: companyapp/server
+
+    # Create companyApp server docker image
+    - name: prod.6 create companyApp server docker image
+      shell: cd /home/vagrant/company-app/companyApp/node-version/ && \
+        docker build -f server/Dockerfile -t companyapp/server ./server/
+
+
+    # Create companyApp web client docker image
+    - name: prod.7 create companyApp web client docker image
+      docker_image:
+        path: /home/vagrant/company-app/companyApp/node-version/webclient
+        name: companyapp/webclient
+
+    # Run docker compose
+    - name: prod.8 run docker compose
+      docker_service:
+        project_name: companyApp
+        project_src: /home/vagrant/company-app/companyApp/node-version/

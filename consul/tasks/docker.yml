@@ -1,0 +1,66 @@
+---
+
+######
+#
+# Required files:
+#   - git-clone.sh
+#   - Dockerfile
+#   - docker-compose.yml
+#
+####
+
+# Copy git script
+- name: docker.1 copy git clone file
+  copy:
+    src: upload/git-clone.sh
+    dest: /home/vagrant/
+    mode: 0770
+
+# Run git clone script
+- name: docker.2 run git clone script
+  command: sh ./git-clone.sh
+  args:
+    creates: company-app
+
+# Copy docker file to server
+- name: docker.3 copy Dockerfile to server
+  copy:
+    src: upload/Dockerfile
+    dest: /home/vagrant/company-app/companyApp/node-version/server
+    mode: 0777
+
+# Copy docker file to web client
+- name: docker.4 copy Dockerfile to webClient
+  copy:
+    src: upload/Dockerfile
+    dest: /home/vagrant/company-app/companyApp/node-version/webclient
+    mode: 0777
+
+# Copy docker-compose && Create Docker image
+- name: docker.5 copy docker-compose file
+  copy:
+    dest: /home/vagrant/company-app/companyApp/node-version/
+    src: upload/docker-compose.yml
+
+# Create companyApp server docker image
+# - name: docker.6 create companyApp server docker image
+#   docker_image:
+#     path: /home/vagrant/company-app/companyApp/node-version/server
+#     name: companyapp/server
+
+# Create companyApp server docker image
+- name: docker.6 create companyApp server docker image
+  shell: cd /home/vagrant/company-app/companyApp/node-version/ && \
+    docker build -f server/Dockerfile -t companyapp/server ./server/
+
+# Create companyApp web client docker image
+- name: docker.7 create companyApp web client docker image
+  docker_image:
+    path: /home/vagrant/company-app/companyApp/node-version/webclient
+    name: companyapp/webclient
+
+# Run docker compose
+- name: docker.8 run docker compose
+  docker_service:
+    project_name: companyApp
+    project_src: /home/vagrant/company-app/companyApp/node-version/

@@ -1,0 +1,11 @@
+---
+  # Start up docker registrator container
+- name: registrator. start registrator in docker
+  docker:
+    command: -internal consul://127.0.0.1:8500
+    name: registrator
+    net: host
+    image: gliderlabs/registrator
+    state: started
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock

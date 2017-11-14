@@ -1,0 +1,18 @@
+---
+- become: yes
+  hosts: all
+  tasks:
+    - include: tasks/base.yml
+    - include: tasks/docker.yml
+    - include: tasks/consul.yml
+    #- include: tasks/docker_opts.yml
+
+    # Start consul
+    - name: dev. Start up Consul
+      shell: nohup consul agent -bind=192.168.10.3 \
+        -data-dir /var/local/consul/data -node development \
+        >> /var/local/consul/logs/stdout \
+        2>> /var/local/consul/logs/stderr &
+    # Connect to Consul server
+    - name: dev. joining Consul server on prod
+      shell: consul join 192.168.10.2

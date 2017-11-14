@@ -1,0 +1,15 @@
+---
+- become: yes
+  hosts: all
+  tasks:
+    - include: tasks/base.yml
+    - include: tasks/docker.yml
+    - include: tasks/consul.yml
+    - include: tasks/registrator.yml
+
+    # Consul start
+    - name: prod. Consul is running
+      shell: nohup consul agent -bootstrap -bind=192.168.10.2 \
+        -data-dir /var/local/consul/data -node production -server \
+        >> /var/local/consul/logs/stdout \
+        2>> /var/local/consul/logs/stderr &

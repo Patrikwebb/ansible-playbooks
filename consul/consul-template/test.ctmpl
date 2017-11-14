@@ -1,0 +1,3 @@
+{{range service "nginx-80"}}
+You can access Nginx at IP {{.Address}} and port {{.Port}}
+{{end}}

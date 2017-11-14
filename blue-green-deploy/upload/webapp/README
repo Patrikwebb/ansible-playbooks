@@ -1,0 +1,8 @@
+Applikationen kör på port 8080 under adressen /webapp-0.0.1-SNAPSHOT.
+
+Tänk på att lägga till följande i docker-compose.yml:
+
+  webapp:
+    build: .
+    depends_on:
+    - some-postgresql

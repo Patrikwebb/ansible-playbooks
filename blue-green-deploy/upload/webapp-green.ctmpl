@@ -1,0 +1,3 @@
+upstream webapp {
+{{range service "webapp-green"}}    server {{.Address}}:{{.Port}};
+{{end}}}

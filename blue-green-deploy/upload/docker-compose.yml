@@ -1,0 +1,24 @@
+version: '2'
+services:
+  proxy:
+    image: nginx
+    ports:
+    - "80:80"
+    restart: unless-stopped
+    volumes:
+    - ./nginx.conf:/etc/nginx/nginx.conf
+    - ./webapp.conf:/etc/nginx/upstreams/webapp.conf
+  some-postgres:
+    image: postgres
+  webapp-blue:
+    depends_on:
+    - some-postgres
+    expose:
+    - "8080"
+    image: webapp-blue
+  webapp-green:
+    depends_on:
+    - some-postgres
+    expose:
+    - "8080"
+    image: webapp-green

@@ -1,0 +1,29 @@
+---
+- become: yes
+  hosts: default
+  tasks:
+  - include: tasks/base.yml
+  - include: tasks/registrator.yml
+  - include: tasks/consul.yml
+
+  # Copy over upload folder
+  - name: playbook. copy webapp project
+    copy:
+      dest: /upload
+      src: upload/
+
+  # Create webapps docker images
+  - name: playbook. create webapp docker images
+    docker_image:
+      name: '{{item}}'
+      path: /upload/webapp
+    with_items:
+      - webapp
+      - webapp-blue
+      - webapp-green
+
+  # Start docker-compose 
+  - name: playbook. start docker-compose webapp
+    docker_service:
+      project_name: webapp
+      project_src: /upload

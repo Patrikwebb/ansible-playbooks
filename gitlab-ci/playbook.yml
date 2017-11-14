@@ -1,0 +1,23 @@
+---
+- become: yes
+  hosts: default
+  tasks:
+  - include: tasks/base.yml
+
+  # Copy over upload folder
+  - name: playbook. copy webapp project
+    copy:
+      dest: /upload
+      src: upload/
+
+  # Build the docker images for gitlab runner
+  - name: playbook. build the runner build environment image
+    docker_image:
+      name: runner-build-environment
+      path: /upload
+
+  # Start up docker-compose
+  - name: playbook. start docker-compose gitlab project
+    docker_service:
+      project_name: gitlab
+      project_src: /upload

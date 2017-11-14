@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  gitlab:
+    expose:
+    - 8001
+    image: 'gitlab/gitlab-ce'
+    ports:
+    - "2222:22"
+    - "80:80"
+    - "443:443"
+    restart: always
+    volumes:
+    - ./data:/var/opt/gitlab
+    - ./etc-gitlab:/etc/gitlab
+    - ./logs:/var/log/gitlab
+    - ./wildcard.key:/etc/gitlab/ssl/wildcard.key
+    - ./wildcard.crt:/etc/gitlab/ssl/wildcard.crt
+  runner:
+    image: gitlab/gitlab-runner
+    restart: always
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock

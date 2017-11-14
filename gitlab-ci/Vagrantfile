@@ -1,0 +1,14 @@
+# https://jonkri.se/java15/slides/25.html#/18
+# https://jonkri.se/java15/slides/26.html#/4
+# Extra hardware resources
+Vagrant.configure(2) do |config|
+  config.vm.box = "debian/jessie64"
+  config.vm.network "private_network", ip: "192.168.0.2"
+  config.vm.provider "virtualbox" do |virtualbox|
+    virtualbox.memory = 4096
+    virtualbox.cpus = 2
+  end
+  config.vm.provision :ansible do |ansible|
+    ansible.playbook = "playbook.yml"
+  end
+end
